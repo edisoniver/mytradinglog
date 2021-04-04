@@ -21,14 +21,20 @@
     
     <div class="p-5 mb-4 rounded-3">
       <div class="container-fluid center">
+       
         <h1 class="display-5 fw-bold">TRADING LOG</h1>
         <p class="col-md-8 fs-4">Refresh the page to reload the data.</p>
-        <div id='crosspnl'>
-        <h3 class="display-4">Margin Balance: ${{ finalbalance }}</h3>
         
-            <h3 class="display-4">PNL: ${{ crosspnl }}</h3>
+        <div class="mx-auto" style="width: 200px;">
+        <h3 class="display-4">Margin Balance: </h3>
+        <h4> ${{ finalbalance }}</h4>
         
-        <h3 class="display-4">Wallet Balance: ${{ walletbalance }}</h3>
+            <h3 class="display-4">PNL: </h3>
+            <div id='crosspnl'> <h4> ${{ crosspnl }}</h4> </div>
+        
+        <h3 class="display-4">Wallet Balance: </h3>
+        <h4> ${{ walletbalance }}</h4>
+        </div>
         </div>
       </div>
       <div class="container-fluid">

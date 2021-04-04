@@ -28,7 +28,7 @@ def hello():
         
 
 
-        print(finalbalance)
+        #print(finalbalance)
         time.sleep(1)
         return render_template('home.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance=walletbalance, 
         column_names=binancepositions.columns.values, row_data=list(binancepositions.values.tolist()), link_column="My Positions", zip=zip)
@@ -37,45 +37,50 @@ def hello():
 # Gets current balance
 def final_balance():
     
-    result = request_client.get_balance_v2()
+    result = request_client.get_account_information_v2()
 
-    df = pd.DataFrame([t.__dict__ for t in result])
 
-    balance = df['balance'].values[0]
-    crosspnl = df['crossUnPnl'].values[0]
-    print(df['crossUnPnl'].values[0])
-    print(df['balance'].values[0])
+    finalBalance = result.totalMarginBalance
+ #-------------- My old code 
+   # df = pd.DataFrame([t.__dict__ for t in result]
+    # balance = df['balance'].values[0]
+    # crosspnl = df['crossUnPnl'].values[0]
+    # #print(df['crossUnPnl'].values[0])
+    # #print(df['balance'].values[0])
 
-    finalBalance = float(balance) + float(crosspnl)
-    print(finalBalance)
-
+    # finalBalance = float(balance) + float(crosspnl)
+    # #print(finalBalance)
+# ---------------
     return finalBalance
 # Gets PNL
 def mypnl():
 
-    result = request_client.get_balance_v2()
-
-    df = pd.DataFrame([t.__dict__ for t in result])
-
-    crosspnl = df['crossUnPnl'].values[0]
-    print(crosspnl)
+    result = request_client.get_account_information_v2()
+    crosspnl = result.totalUnrealizedProfit
+    #----- Old code
+    # result = request_client.get_balance_v2()
+    # df = pd.DataFrame([t.__dict__ for t in result])
+    # crosspnl = df['crossUnPnl'].values[0]
+    # #print(crosspnl)
 
     return crosspnl
 
 # Gets Wallet balance 
 def wallet_balance():
-    result = request_client.get_balance_v2()
 
-    df = pd.DataFrame([t.__dict__ for t in result])
-
-    balance = df['balance'].values[0]
+    
+    result = request_client.get_account_information_v2()
+    balance = result.totalWalletBalance
+    #-------Old Code -------
+    # result = request_client.get_balance_v2()
+    # df = pd.DataFrame([t.__dict__ for t in result])
+    # balance = df['balance'].values[0]
 
     return balance
 
 # Gets all available active positions
 def positions():
     result = request_client.get_account_information()
-    PrintMix.print_data(result.assets)
 
     print("=== Positions ===")
     df = pd.DataFrame([t.__dict__ for t in result.positions])
@@ -115,3 +120,24 @@ def positions():
             
     return df_all
     
+def accountinformation():
+    result = request_client.get_account_information_v2()
+    
+    print("canDeposit: ", result.canDeposit)
+    print("canWithdraw: ", result.canWithdraw)
+    print("feeTier: ", result.feeTier)
+    print("maxWithdrawAmount: ", result.maxWithdrawAmount)
+    print("totalInitialMargin: ", result.totalInitialMargin)
+    print("totalMaintMargin: ", result.totalMaintMargin)
+    print("totalMarginBalance: ", result.totalMarginBalance)
+    print("totalOpenOrderInitialMargin: ", result.totalOpenOrderInitialMargin)
+    print("totalPositionInitialMargin: ", result.totalPositionInitialMargin)
+    print("totalUnrealizedProfit: ", result.totalUnrealizedProfit)
+    print("totalWalletBalance: ", result.totalWalletBalance)
+    print("totalCrossWalletBalance: ", result.totalCrossWalletBalance)
+    print("totalCrossUnPnl: ", result.totalCrossUnPnl)
+    print("availableBalance: ", result.availableBalance)
+    print("maxWithdrawAmount: ", result.maxWithdrawAmount)
+    print("updateTime: ", result.updateTime)
+
+accountinformation()

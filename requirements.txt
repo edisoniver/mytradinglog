@@ -1,7 +1,3 @@
-# ivertradinglog
-An interactive trading log showing wallet balance, current positions, PNL in real time. 
-
-
 STEPS ->
 
 -> pip3 install requests
@@ -16,4 +12,5 @@ then do -> python3 setup.py install
 Add API key and Secret key
 
 Run flask as -> flask run --host=0.0.0.0
+
 

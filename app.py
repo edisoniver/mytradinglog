@@ -24,15 +24,14 @@ def hello():
         finalbalance = str(final_balance())
         walletbalance = str(wallet_balance())
         crosspnl = str(mypnl())
-        binancepositions = positions()
-        
+        # binancepositions = positions()
+        # column_names=binancepositions.columns.values, row_data=list(binancepositions.values.tolist()), link_column="My Positions"
         tradeinfo = trade_info()
 
         #print(finalbalance)
         time.sleep(1)
-        return render_template('home.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance=walletbalance, 
-        column_names=binancepositions.columns.values, row_data=list(binancepositions.values.tolist()), link_column="My Positions", zip=zip, 
-        column_names2=tradeinfo.columns.values, row_data2=list(tradeinfo.values.tolist()), link_column2="My positions 2")
+        return render_template('home.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance =walletbalance,   
+        column_names2=tradeinfo.columns.values, row_data2=list(tradeinfo.values.tolist()), link_column2="My positions 2", zip=zip)
 
     
 # Gets current balance
@@ -80,28 +79,62 @@ def wallet_balance():
     return balance
 
 # Gets all available active positions
-def positions():
-    result = request_client.get_account_information()
+# def positions():
+#     result2 = request_client.get_account_information()
+#     df2 = pd.DataFrame([t.__dict__ for t in result2.positions])
+ 
+#     #Prints out all columns in the dataframe
+#     columnsNamesArr = df2.columns.values
 
-    print("=== Positions ===")
-    df = pd.DataFrame([t.__dict__ for t in result.positions])
-    print(df)
-    print("==============")
-    #Prints out all columns in the dataframe
+#     initialMargin = df2['initialMargin'].tolist()
+#     #unrealizedProfit = df['unrealizedProfit'].tolist()
+#     #print(initialMargin)
+#     #print(unrealizedProfit)
+
+
+#     #For all values that are not empty, finds the row ID
+#     #Then it append it to this data frame of the whole row
+#     #Removes random dataframe columns
+#     #Returns the value
+#     df_all = pd.DataFrame()
+#     for i in range(len(initialMargin)):
+#         if initialMargin[i] == 0.0:
+#             pass
+#         else:
+#             #print("ROW NUMBER: -> ", i)
+#             #print("INITIAL MARGIN", initialMargin[i])
+#             #active_positions.append(df.iloc[i, :])
+#             position_results = df2.iloc[i, :]
+#             df_all = df_all.append(position_results)
+#             df_all = df_all.drop(['isolated'], axis=1)
+#             df_all = df_all.drop(['positionSide'], axis=1)
+#             df_all = df_all.drop(['maintMargin'], axis=1)
+#     initialposition = df_all.pop('initialMargin')
+
+
+        
+#             #df_all.insert(0, 'symbol', first_column)
+#     #print(df_all) Print active positions here.
+#     print("""----
+#     ---
+#     ---
+#     ---""")
+#     print(initialposition)
+#     return initialposition
+    
+def trade_info():
+    #FOR TRADES
+    result = request_client.get_position_v2()
+    df = pd.DataFrame([t.__dict__ for t in result])
+    #TO GET MARGIN DATA
+    result2 = request_client.get_account_information()
+    df2 = pd.DataFrame([t.__dict__ for t in result2.positions])
+    #Initial Margin!
+    initialMargin = df2['initialMargin'].tolist()
     #columnsNamesArr = df.columns.values
+    entryprice = df['entryPrice'].tolist()
 
-    initialMargin = df['initialMargin'].tolist()
-    #unrealizedProfit = df['unrealizedProfit'].tolist()
-    #print(initialMargin)
-    #print(unrealizedProfit)
-    #print(columnsNamesArr)
-
-
-
-    #For all values that are not empty, finds the row ID
-    #Then it append it to this data frame of the whole row
-    #Removes random dataframe columns
-    #Returns the value
+    
     df_all = pd.DataFrame()
     for i in range(len(initialMargin)):
         if initialMargin[i] == 0.0:
@@ -110,27 +143,11 @@ def positions():
             #print("ROW NUMBER: -> ", i)
             #print("INITIAL MARGIN", initialMargin[i])
             #active_positions.append(df.iloc[i, :])
-            position_results = df.iloc[i, :]
-            df_all = df_all.append(position_results)
-            df_all = df_all.drop(['isolated'], axis=1)
-            df_all = df_all.drop(['positionSide'], axis=1)
-            df_all = df_all.drop(['maintMargin'], axis=1)
-            first_column = df_all.pop('symbol')
-            df_all.insert(0, 'symbol', first_column)
-    #print(df_all) Print active positions here.
+            position_results2 = df2.iloc[i, :]
+            df_all = df_all.append(position_results2)
+    positionInitialMargin = df_all.pop('initialMargin')
             
-    return df_all
-    
-def trade_info():
-    result = request_client.get_position_v2()
-
-
-    
-    df = pd.DataFrame([t.__dict__ for t in result])
-
-    #columnsNamesArr = df.columns.values
-    entryprice = df['entryPrice'].tolist()
-
+        
     all_pos = pd.DataFrame()
     for i in range(len(entryprice)):
         if entryprice[i] == 0.0:
@@ -138,6 +155,19 @@ def trade_info():
         else:
             position_results = df.iloc[i, :]
             all_pos = all_pos.append(position_results)
-            
+            all_pos = all_pos.drop(['isolatedMargin'], axis=1)
+            all_pos = all_pos.drop(['isAutoAddMargin'], axis=1)
+            all_pos = all_pos.drop(['maxNotionalValue'], axis=1)
+            #all_pos = all_pos.drop(['positionAmt'], axis=1)
+            all_pos = all_pos.drop(['positionSide'], axis=1)
+            first_column = all_pos.pop('symbol')
+            all_pos.insert(0, 'symbol', first_column)
+            second_column = all_pos.pop('marginType')
+            all_pos.insert(1, 'marginType', second_column)
+            third_column = all_pos.pop('leverage')
+            all_pos.insert(1, 'leverage', third_column)
+    all_pos.insert(1, 'initialMargin', positionInitialMargin)
+
+
     return all_pos
    

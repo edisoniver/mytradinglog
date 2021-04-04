@@ -1,6 +1,10 @@
 # ivertradinglog
 An interactive trading log showing wallet balance, current positions, PNL in real time. 
 
+https://github.com/Binance-docs/Binance_Futures_python
+
+Install that first ^ 
+
 
 STEPS ->
 

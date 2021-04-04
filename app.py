@@ -30,7 +30,7 @@ def hello():
 
         #print(finalbalance)
         time.sleep(1)
-        return render_template('home.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance =walletbalance,   
+        return render_template('jumbotron.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance =walletbalance,   
         column_names2=tradeinfo.columns.values, row_data2=list(tradeinfo.values.tolist()), link_column2="My positions 2", zip=zip)
 
     

@@ -1,0 +1,2 @@
+# mytradinglog
+Interactive Trading Log 

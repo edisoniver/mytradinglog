@@ -1,0 +1,9 @@
+#crosspnl {
+    background-color: black;
+    color: greenyellow;
+}
+
+#crosspnl:hover {
+    background-color: greenyellow;
+    color: black;
+}

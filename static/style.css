@@ -5,4 +5,9 @@
 #moreinfo {
     color: grey;
     font-style: italic;
+    font-size: 50%;
+}
+
+#thattable {
+    background-color: lightblue;
 }

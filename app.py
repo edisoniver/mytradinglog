@@ -68,7 +68,7 @@ def mypnl():
 # Gets Wallet balance 
 def wallet_balance():
 
-    
+
     result = request_client.get_account_information_v2()
     balance = result.totalWalletBalance
     #-------Old Code -------

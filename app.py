@@ -169,5 +169,7 @@ def trade_info():
     all_pos.insert(1, 'initialMargin', positionInitialMargin)
 
 
+    all_pos.columns = ['Pair', 'Margin', 'Leverage', 'Mode', 'Entry Price', 'LiqPrice', 'Mark Price', 'Amount', 'PNL']
+
     return all_pos
    

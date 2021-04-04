@@ -26,12 +26,13 @@ def hello():
         crosspnl = str(mypnl())
         binancepositions = positions()
         
-
+        tradeinfo = trade_info()
 
         #print(finalbalance)
         time.sleep(1)
         return render_template('home.html', finalbalance=finalbalance, crosspnl=crosspnl, walletbalance=walletbalance, 
-        column_names=binancepositions.columns.values, row_data=list(binancepositions.values.tolist()), link_column="My Positions", zip=zip)
+        column_names=binancepositions.columns.values, row_data=list(binancepositions.values.tolist()), link_column="My Positions", zip=zip, 
+        column_names2=tradeinfo.columns.values, row_data2=list(tradeinfo.values.tolist()), link_column2="My positions 2")
 
     
 # Gets current balance
@@ -86,7 +87,7 @@ def positions():
     df = pd.DataFrame([t.__dict__ for t in result.positions])
     print(df)
     print("==============")
-
+    #Prints out all columns in the dataframe
     #columnsNamesArr = df.columns.values
 
     initialMargin = df['initialMargin'].tolist()
@@ -120,24 +121,23 @@ def positions():
             
     return df_all
     
-def accountinformation():
-    result = request_client.get_account_information_v2()
-    
-    print("canDeposit: ", result.canDeposit)
-    print("canWithdraw: ", result.canWithdraw)
-    print("feeTier: ", result.feeTier)
-    print("maxWithdrawAmount: ", result.maxWithdrawAmount)
-    print("totalInitialMargin: ", result.totalInitialMargin)
-    print("totalMaintMargin: ", result.totalMaintMargin)
-    print("totalMarginBalance: ", result.totalMarginBalance)
-    print("totalOpenOrderInitialMargin: ", result.totalOpenOrderInitialMargin)
-    print("totalPositionInitialMargin: ", result.totalPositionInitialMargin)
-    print("totalUnrealizedProfit: ", result.totalUnrealizedProfit)
-    print("totalWalletBalance: ", result.totalWalletBalance)
-    print("totalCrossWalletBalance: ", result.totalCrossWalletBalance)
-    print("totalCrossUnPnl: ", result.totalCrossUnPnl)
-    print("availableBalance: ", result.availableBalance)
-    print("maxWithdrawAmount: ", result.maxWithdrawAmount)
-    print("updateTime: ", result.updateTime)
+def trade_info():
+    result = request_client.get_position_v2()
 
-accountinformation()
+
+    
+    df = pd.DataFrame([t.__dict__ for t in result])
+
+    #columnsNamesArr = df.columns.values
+    entryprice = df['entryPrice'].tolist()
+
+    all_pos = pd.DataFrame()
+    for i in range(len(entryprice)):
+        if entryprice[i] == 0.0:
+            pass
+        else:
+            position_results = df.iloc[i, :]
+            all_pos = all_pos.append(position_results)
+            
+    return all_pos
+   
